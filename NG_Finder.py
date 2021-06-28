@@ -4,6 +4,13 @@
 
 from termcolor import colored
 
+def reverser(FASTA, mutation):
+    global newFASTA
+    global newMutation
+    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('} 
+    newFASTA = ''.join(complement.get(base, base) for base in reversed(FASTA))
+    newMutation = ''.join(complement.get(base, base) for base in reversed(mutation))
+
 def parsedFASTA (FASTA):
     global newString
     global position
@@ -53,6 +60,8 @@ def spacer(newString, listByPos):
     listOfSpacers = []
     for tup in listByPos:
         spacerSequence = ""
+        if (newString[tup[0]-21]) != "G":
+            spacerSequence = spacerSequence + "G"
         for bases in range ((tup[0]-21), (tup[0]-1)):
             spacerSequence = spacerSequence + newString[bases]
         listOfSpacers.append(spacerSequence)
@@ -73,30 +82,50 @@ def extension(newString, listByPos, mutation):
         listOfExtensions.append(reverse_complement)
     return (print(listOfExtensions))
 
+def analysisPrinter(listByPos, listOfSpacers, listOfExtensions):
+    for count in range (0, len(listByPos)):
+        print ("-------------------")
+        if (listByPos[count][0] + 1 == position):
+            print (colored(("** PAM DESTROYED **"), 'blue'))
+            print (colored("PAM " + str(count + 1) + ": " + str(listByPos[count][1]), 'blue'))
+            print (colored("Position: " + str(listByPos[count][0]), 'blue'))
+            print (colored("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt", 'blue'))
+            print (colored("Extension sequence Top: " + "gtgc" + listOfExtensions[count], 'blue'))
+            complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
+            reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
+            reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
+            print (colored("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer, 'blue'))
+            print (colored("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension, 'blue'))
+            continue
+        print ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]))
+        print ("Position: " + str(listByPos[count][0]))
+        print ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt")
+        print ("Extension sequence Top: " + "gtgc" + listOfExtensions[count])
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
+        reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
+        reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
+        print ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer)
+        print ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension)
+    print ("----------------------------------")
+
 def main(FASTA, mutation):
     parsedFASTA(FASTA)
     NG_Finder(newString, position)
     spacer(newString, listByPos)
     extension(newString, listByPos, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
-    for count in range (0, len(listByPos)):
-        print ("-------------------")
-        if (listByPos[count][0] + 1 == position):
-            print (colored(("** SPECIAL CASE **"), 'blue'))
-            print (colored("PAM " + str(count + 1) + ": " + str(listByPos[count][1]), 'blue'))
-            print (colored("Position: " + str(listByPos[count][0]), 'blue'))
-            print (colored("Spacer sequence: " + listOfSpacers[count], 'blue'))
-            print (colored("Extension sequence: " + listOfExtensions[count], 'blue'))
-            continue
-        print ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]))
-        print ("Position: " + str(listByPos[count][0]))
-        print ("Spacer sequence: " + listOfSpacers[count])
-        print ("Extension sequence: " + listOfExtensions[count])
-    print ("-------------------")
+    print (colored("\n*PLUS STRAND ANALYSIS*\n", 'red'))
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions)
+    print (colored("\n*MINUS STRAND ANALYSIS*\n", 'red'))
+    reverser(FASTA, mutation)
+    parsedFASTA(newFASTA)
+    NG_Finder(newString, position)
+    spacer(newString, listByPos)
+    extension(newString, listByPos, newMutation)
+    print ("Successfully found spacer and extension sequences for all PAMs.")
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions)
 
-
-
-FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
+FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
 
 mutation = "T"
 main(FASTA, mutation)

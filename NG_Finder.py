@@ -2,7 +2,11 @@
 # FASTA = input()
 # NG_Finder(FASTA)
 
-from termcolor import colored
+from tkinter import *
+import sys
+
+window = Tk()
+window.title("Prime Editing: NG Analysis program")
 
 def reverser(FASTA, mutation):
     global newFASTA
@@ -82,55 +86,87 @@ def extension(newString, listByPos, mutation):
         listOfExtensions.append(reverse_complement)
     return (print(listOfExtensions))
 
-def analysisPrinter(listByPos, listOfSpacers, listOfExtensions):
+def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
+    addString = ""
     for count in range (0, len(listByPos)):
-        print ("-------------------")
+        addString = addString + ("-------------------\n")
         if (listByPos[count][0] + 1 == position):
-            print (colored(("** PAM DESTROYED **"), 'blue'))
-            print (colored("PAM " + str(count + 1) + ": " + str(listByPos[count][1]), 'blue'))
-            print (colored("Position: " + str(listByPos[count][0]), 'blue'))
-            print (colored("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt", 'blue'))
-            print (colored("Extension sequence Top: " + "gtgc" + listOfExtensions[count], 'blue'))
+            addString = addString + ("** PAM DESTROYED **\n")
+            addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
+            addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
+            addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
+            addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
             complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
             reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
             reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-            print (colored("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer, 'blue'))
-            print (colored("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension, 'blue'))
+            addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
+            addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
             continue
-        print ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]))
-        print ("Position: " + str(listByPos[count][0]))
-        print ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt")
-        print ("Extension sequence Top: " + "gtgc" + listOfExtensions[count])
+        addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
+        addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
+        addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
+        addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
         reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
         reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-        print ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer)
-        print ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension)
-    print ("----------------------------------")
+        addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
+        addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
+    addString = addString + ("----------------------------------")
+    file1.write(addString)
 
-def main(FASTA, mutation):
+def main():
+    FASTA = FASTAEntry.get()
+    mutation = mutationEntry.get()
+    filename = filenameEntry.get()
+    file1 = open(filename+".txt", "w")
     parsedFASTA(FASTA)
     NG_Finder(newString, position)
     spacer(newString, listByPos)
     extension(newString, listByPos, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
-    print (colored("\n*PLUS STRAND ANALYSIS*\n", 'red'))
-    analysisPrinter(listByPos, listOfSpacers, listOfExtensions)
-    print (colored("\n*MINUS STRAND ANALYSIS*\n", 'red'))
+    file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
+    file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")
     reverser(FASTA, mutation)
     parsedFASTA(newFASTA)
     NG_Finder(newString, position)
     spacer(newString, listByPos)
     extension(newString, listByPos, newMutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
-    analysisPrinter(listByPos, listOfSpacers, listOfExtensions)
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
+    print ("Exiting...")
+    sys.exit()
 
-FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
+# FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
 
-mutation = "T"
-main(FASTA, mutation)
+# mutation = "T"
+# main(FASTA, mutation)
 
+canvas = Canvas(window, height = 200, width = 600)
+canvas.pack()
 
+frame = Frame(window,relief = 'groove')
+frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
+
+welcome = Label(frame, text = "Welcome to the Prime Editing Program for NG PAM analysis", fg = "Black")
+welcome.pack(side = "top")
+
+FASTAEntry = Entry(frame, width = 50)
+FASTAEntry.pack(side = "top")
+FASTAEntry.insert(0, "Please enter the DNA sequence")
+
+mutationEntry = Entry(frame, width = 50)
+mutationEntry.pack(side = "top")
+mutationEntry.insert(0, "Please enter the desired mutation")
+
+filenameEntry = Entry(frame, width = 50)
+filenameEntry.pack(side = "top")
+filenameEntry.insert(0, "Please enter the desired .txt filename")
+
+enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", bg = "gray", command = main)
+enterButton.pack()
+
+window.mainloop()
 
 
 

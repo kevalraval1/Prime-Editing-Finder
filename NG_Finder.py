@@ -3,7 +3,7 @@
 # NG_Finder(FASTA)
 
 from tkinter import *
-import sys
+import sys, os
 
 window = Tk()
 window.title("Prime Editing: NG Analysis program")
@@ -118,7 +118,8 @@ def main():
     FASTA = FASTAEntry.get()
     mutation = mutationEntry.get()
     filename = filenameEntry.get()
-    file1 = open(filename+".txt", "w")
+    completename = os.path.join(os.path.dirname("NG_Finder.py"), (filename + ".txt"))
+    file1 = open(completename, "w")
     parsedFASTA(FASTA)
     NG_Finder(newString, position)
     spacer(newString, listByPos)
@@ -135,6 +136,7 @@ def main():
     print ("Successfully found spacer and extension sequences for all PAMs.")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     print ("Exiting...")
+    file1.close()
     sys.exit()
 
 # FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
@@ -150,6 +152,7 @@ frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 
 welcome = Label(frame, text = "Welcome to the Prime Editing Program for NG PAM analysis", fg = "Black")
 welcome.pack(side = "top")
+
 
 FASTAEntry = Entry(frame, width = 50)
 FASTAEntry.pack(side = "top")

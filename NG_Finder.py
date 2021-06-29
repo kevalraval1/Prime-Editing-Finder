@@ -118,7 +118,10 @@ def main():
     FASTA = FASTAEntry.get()
     mutation = mutationEntry.get()
     filename = filenameEntry.get()
+    #For testing code:
     completename = os.path.join(os.path.dirname("NG_Finder.py"), (filename + ".txt"))
+    #For testing executable:
+    # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
     parsedFASTA(FASTA)
     NG_Finder(newString, position)

@@ -139,6 +139,7 @@ def main():
     print ("Successfully found spacer and extension sequences for all PAMs.")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     print ("Exiting...")
+    print("test")
     file1.close()
     sys.exit()
 

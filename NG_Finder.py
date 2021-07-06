@@ -72,7 +72,7 @@ def extension(newString, listByPos, mutation):
     listOfExtensions = []
     for tup in listByPos:
         extensionSequence = ""
-        for bases in range ((tup[0]-(PBSlength + 4)), (tup[0]+9)):
+        for bases in range ((tup[0]-(PBSlength + 4)), (tup[0] + 9)):
             if bases == position-1:
                 extensionSequence = extensionSequence + mutation.lower()
                 continue
@@ -82,8 +82,37 @@ def extension(newString, listByPos, mutation):
         listOfExtensions.append(reverse_complement)
     return (print(listOfExtensions))
 
+def ngRNA(newString, mutation):
+    global listOfngRNA
+    listOfngRNA = []
+    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('}
+    tempList = list(newString)
+    tempList[position-1] = mutation.lower()
+    newString = "".join(tempList)
+    reversedString = ''.join(complement.get(base, base) for base in reversed(newString))
+    counter = -1
+    newPosition = len(newString) - position + 1
+    for base in range (newPosition, newPosition + 7):
+        if reversedString[base] == "G":
+            counter = base - 1
+            break
+    if (counter != -1):
+        ngRNA1 = ""
+        if reversedString[counter - 20] != "G":
+            ngRNA1 = ngRNA1 + "G"
+        for bases in range (counter - 20, counter):
+            ngRNA1 = ngRNA1 + reversedString[bases]
+        ngRNA2 = ''.join(complement.get(base, base) for base in reversed(ngRNA1))
+        tuple = (ngRNA1, ngRNA2)
+        listOfngRNA.append(tuple)
+    if (counter == - 1):
+        tuple = ("N/A", "N/A")
+        listOfngRNA.append(tuple)
+
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     addString = ""
+    addString = addString + ("ngRNA Top: " + "cacc" + listOfngRNA[0][0] + "\n")
+    addString = addString + ("ngRNA Bottom: " + "aaac" + listOfngRNA[0][1] + "\n\n")
     for count in range (0, len(listByPos)):
         if (listByPos[count][0] + 1 == position):
             complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
@@ -129,6 +158,7 @@ def main():
     NG_Finder(newString, position)
     spacer(newString, listByPos)
     extension(newString, listByPos, mutation)
+    ngRNA(newString, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
@@ -138,6 +168,7 @@ def main():
     NG_Finder(newString, position)
     spacer(newString, listByPos)
     extension(newString, listByPos, newMutation)
+    ngRNA(newString, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     print ("Exiting...")
@@ -180,4 +211,3 @@ enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", 
 enterButton.pack()
 
 window.mainloop()
-

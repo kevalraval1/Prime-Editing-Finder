@@ -90,30 +90,30 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     addString = ""
     for count in range (0, len(listByPos)):
         if (listByPos[count][0] + 1 == position):
+            complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
+            reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
+            reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
             addString = addString + ("-------------------\n")
             addString = addString + ("** PAM DESTROYED **\n")
             addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
             addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
             addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-            addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-            complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
-            reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
-            reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
             addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
+            addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
             addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
             break
     for count in range (0, len(listByPos)):
         if (listByPos[count][0] + 1 == position):
             continue
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
+        reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
+        reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
         addString = addString + ("-------------------\n")
         addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
         addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
         addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-        addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
-        reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
-        reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
         addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
+        addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
         addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
     addString = addString + ("----------------------------------")
     file1.write(addString)

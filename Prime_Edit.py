@@ -2,7 +2,7 @@ from tkinter import *
 import sys, os
 
 window = Tk()
-window.title("Prime Editing: NG Analysis program")
+window.title("Prime Editing: spG Peg Design")
 
 def reverser(FASTA, mutation):
     global newFASTA
@@ -150,7 +150,7 @@ def main():
     global PBSlength
     PBSlength = int(PBSlengthEntry.get())
     #For testing code:
-    completename = os.path.join(os.path.dirname("NG_Finder.py"), (filename + ".txt"))
+    completename = os.path.join(os.path.dirname("Prime_Edit.py"), (filename + ".txt"))
     #For testing executable:
     # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
@@ -186,7 +186,7 @@ canvas.pack()
 frame = Frame(window,relief = 'groove')
 frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 
-welcome = Label(frame, text = "Welcome to the Prime Editing Program for NG PAM analysis", fg = "Black")
+welcome = Label(frame, text = "Welcome to the spG Peg Design Program", fg = "Black")
 welcome.pack(side = "top")
 
 

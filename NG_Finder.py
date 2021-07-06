@@ -76,7 +76,7 @@ def extension(newString, listByPos, mutation):
     listOfExtensions = []
     for tup in listByPos:
         extensionSequence = ""
-        for bases in range ((tup[0]-17), (tup[0]+9)):
+        for bases in range ((tup[0]-(PBSlength + 4)), (tup[0]+9)):
             if bases == position-1:
                 extensionSequence = extensionSequence + mutation.lower()
                 continue
@@ -122,6 +122,8 @@ def main():
     FASTA = FASTAEntry.get()
     mutation = mutationEntry.get()
     filename = filenameEntry.get()
+    global PBSlength
+    PBSlength = int(PBSlengthEntry.get())
     #For testing code:
     completename = os.path.join(os.path.dirname("NG_Finder.py"), (filename + ".txt"))
     #For testing executable:
@@ -172,6 +174,11 @@ mutationEntry.insert(0, "Please enter the desired mutation")
 filenameEntry = Entry(frame, width = 50)
 filenameEntry.pack(side = "top")
 filenameEntry.insert(0, "Please enter the desired .txt filename")
+
+PBSlengthEntry = Entry(frame, width = 50)
+PBSlengthEntry.pack(side = "top")
+PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17)")
+
 
 enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", bg = "gray", command = main)
 enterButton.pack()

@@ -89,8 +89,8 @@ def extension(newString, listByPos, mutation):
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     addString = ""
     for count in range (0, len(listByPos)):
-        addString = addString + ("-------------------\n")
         if (listByPos[count][0] + 1 == position):
+            addString = addString + ("-------------------\n")
             addString = addString + ("** PAM DESTROYED **\n")
             addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
             addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
@@ -101,7 +101,11 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
             reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
             addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
             addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
+            break
+    for count in range (0, len(listByPos)):
+        if (listByPos[count][0] + 1 == position):
             continue
+        addString = addString + ("-------------------\n")
         addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
         addString = addString + ("Position: " + str(listByPos[count][0]) + "\n")
         addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")

@@ -1,7 +1,3 @@
-# print ("Enter your FASTA Sequence: ")
-# FASTA = input()
-# NG_Finder(FASTA)
-
 from tkinter import *
 import sys, os
 
@@ -184,8 +180,4 @@ enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", 
 enterButton.pack()
 
 window.mainloop()
-
-
-
-
 

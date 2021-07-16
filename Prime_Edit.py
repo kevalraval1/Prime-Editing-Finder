@@ -98,11 +98,11 @@ def spacer(newString, listByPos):
     listOfSpacers = []
     for tup in listByPos:
         spacerSequence = ""
-        if (newString[tup[0]-21]) != "G":
-            spacerSequence = spacerSequence + "G"
-        for bases in range ((tup[0]-21), (tup[0]-1)):
-            spacerSequence = spacerSequence + newString[bases]
-        listOfSpacers.append(spacerSequence)
+        if (newString[tup[0] - 20]) != "G":
+            spacerSequence += "G"
+        for bases in range ((tup[0] - 20), (tup[0])):
+            spacerSequence += newString[bases]
+        listOfSpacers.append(spacerSequence) # List of Spacers = [spacer 1 for PAM 1, spacer 2 for PAM 2]
     return print(listOfSpacers)
 
 def extension(newString, listByPos, mutation):
@@ -111,10 +111,10 @@ def extension(newString, listByPos, mutation):
     for tup in listByPos:
         extensionSequence = ""
         for bases in range ((tup[0]-(PBSlength + 4)), (tup[0] + 9)):
-            if bases == position-1:
-                extensionSequence = extensionSequence + mutation.lower()
+            if bases == position:
+                extensionSequence += mutation.lower()
                 continue
-            extensionSequence = extensionSequence + newString[bases]
+            extensionSequence += newString[bases]
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
         reverse_complement = ''.join(complement.get(base, base) for base in reversed(extensionSequence))
         listOfExtensions.append(reverse_complement)
@@ -171,14 +171,14 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
         reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
         reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-        addString = addString + ("-------------------\n")
-        addString = addString + ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
-        addString = addString + ("Position: " + str(listByPos[count][0] + 1) + "\n")
-        addString = addString + ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-        addString = addString + ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
-        addString = addString + ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-        addString = addString + ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
-    addString = addString + ("----------------------------------")
+        addString += ("-------------------\n")
+        addString += ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
+        addString += ("Position: " + str(listByPos[count][0] + 1) + "\n")
+        addString += ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
+        addString += ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
+        addString += ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
+        addString += ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
+    addString += ("----------------------------------")
     file1.write(addString)
 
 def main():

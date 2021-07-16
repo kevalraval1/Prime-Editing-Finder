@@ -6,7 +6,7 @@ TODO : Make PAMs variable
     - global variable of PAM size, adjust indexes on that size
 '''
 from tkinter import *
-import sys, os
+import sys, os, regex as re
 
 window = Tk()
 window.title("Prime Editing: spG Peg Design")
@@ -23,15 +23,15 @@ def parsedFASTA (FASTA):
     global position
     newString = ""
     counter = 0
-    position = 0
+    position = 0 # position is the index of the mutation in the new string
     for char in FASTA:
         if (char != "(") and (char != ")"):
-            newString = newString + char
+            newString += char
             counter += 1
         elif (char == ")"):
             continue
         else:
-            position = counter + 1
+            position = counter # Imagine mutation at position 1
             continue
     if len(newString) < 11:
         return print("ERROR: FASTA given is too small, please enter a FASTA that is 11 or more base pairs.")
@@ -41,25 +41,56 @@ def parsedFASTA (FASTA):
         return print("ERROR: Some Spacer or Extension sequences may not be made, PAM may be out of bounds of the FASTA file.")
     return print("Successfully parsed FASTA")
 
-def NG_Finder (newString, position):
+def regexCompiler (input):
+    compile = ""
+    for x in input:
+        if x == 'A':
+            compile += 'A'
+        elif x == 'C':
+            compile += 'C'
+        elif x == 'G':
+            compile += 'G'
+        elif (x == 'T') or (x == 'U'):
+            compile += 'T'
+        elif x == 'M':
+            compile += '[A|C]'
+        elif x == 'R':
+            compile += '[A|G]'
+        elif x == 'W':
+            compile += '[A|T]'
+        elif x == 'S':
+            compile += '[C|G]'
+        elif x == 'Y':
+            compile += '[C|T]'
+        elif x == 'K':
+            compile += '[G|T]'
+        elif x == 'V':
+            compile += '[A|C|G]'
+        elif x == 'H':
+            compile += '[A|C|T]'
+        elif x == 'D':
+            compile += '[A|G|T]'
+        elif x == 'B':
+            compile += '[C|G|T]'
+        elif x == 'N':
+            compile += '[G|A|T|C]'
+    print(compile)
+    return re.compile(compile)
+
+def sequenceFinder (newString, position, inputPAM):
     global listByPos
     listByPos = []
     optimal_string = ""
-    answer = False
-    for x in range (position-7, position+4):
-        optimal_string = optimal_string + newString[x]
-    counter = position - 7 
-    print ("Mutation at 7th position in string: " + optimal_string)
-    for x in optimal_string:
-        if x == "G":
-            if (counter != position-7):
-                tuple = (counter, newString[counter-1]+"G")
-                listByPos.append(tuple)
-                answer = True
-        counter += 1
-    if answer == False:
+    for x in range (position - (4 + len(inputPAM)), position + (3 + len(inputPAM))): # position = index of mutation, 4 bases from end of first possible PAM
+        optimal_string += newString[x]                                               # 2 bases from the start of last possible PAM, + 1 for range function (ends 1 before)
+    print ("Mutation at optimal position in string: " + optimal_string)
+    pattern = regexCompiler(inputPAM)
+    for match in pattern.finditer(optimal_string, overlapped=True):
+        tempTuple = (match.start() + (position - (4 + len(inputPAM))), match.group()) # List by Pos = [(index in newstring, PAM sequence)]
+        listByPos.append(tempTuple)
+    if len(listByPos) == 0:
         return print("No available NG PAM sites for given mutation.")
-    if answer == True:
+    else:
         return print(listByPos)
 
 def spacer(newString, listByPos):
@@ -154,6 +185,7 @@ def main():
     FASTA = FASTAEntry.get()
     mutation = mutationEntry.get()
     filename = filenameEntry.get()
+    inputPAM = pamEntry.get()
     global PBSlength
     PBSlength = int(PBSlengthEntry.get())
     #For testing code:
@@ -162,7 +194,7 @@ def main():
     # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
     parsedFASTA(FASTA)
-    NG_Finder(newString, position)
+    sequenceFinder(newString, position, inputPAM)
     spacer(newString, listByPos)
     extension(newString, listByPos, mutation)
     ngRNA(newString, mutation)
@@ -172,7 +204,7 @@ def main():
     file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")
     reverser(FASTA, mutation)
     parsedFASTA(newFASTA)
-    NG_Finder(newString, position)
+    sequenceFinder(newString, position, inputPAM)
     spacer(newString, listByPos)
     extension(newString, listByPos, newMutation)
     ngRNA(newString, mutation)
@@ -204,6 +236,10 @@ FASTAEntry.insert(0, "Please enter the DNA sequence")
 mutationEntry = Entry(frame, width = 50)
 mutationEntry.pack(side = "top")
 mutationEntry.insert(0, "Please enter the desired mutation")
+
+pamEntry = Entry(frame, width = 50)
+pamEntry.pack(side = "top")
+pamEntry.insert(0, "Please enter the desired PAM sequence")
 
 filenameEntry = Entry(frame, width = 50)
 filenameEntry.pack(side = "top")

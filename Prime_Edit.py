@@ -7,7 +7,6 @@ TODO : Make PAMs variable
 '''
 from tkinter import *
 import sys, os, regex as re
-from typing import overload
 
 window = Tk()
 window.title("Prime Editing: spG Peg Design")
@@ -82,7 +81,7 @@ def pamDestroyed(inputPAM, mutation, listByPos):
     searchString = ""
     for bases in range (position - len(inputPAM) + 1, position + len(inputPAM)):
         searchString += newString[bases]
-    set1 = {}
+    set1 = set()
     for match in pattern.finditer(searchString, overlapped=True):
         set1.add(match.start() + position - len(inputPAM) + 1)
     searchString2 = ""
@@ -91,7 +90,7 @@ def pamDestroyed(inputPAM, mutation, listByPos):
             searchString2 += mutation.upper()
         else:
             searchString2 += newString[bases]
-    set2 = {}
+    set2 = set()
     for match in pattern.finditer(searchString2, overlapped=True):
         set2.add(match.start() + position - len(inputPAM) + 1)
     checkSet = set2.symmetric_difference(set1)

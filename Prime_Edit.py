@@ -99,11 +99,15 @@ def pamDestroyed(inputPAM, mutation, listByPos):
             tempTuple = (elements, searchString2[elements - (position - len(inputPAM) + 1):(len(inputPAM) + elements - (position - len(inputPAM) + 1))], 2)
             listByPos.append(tempTuple)
         if elements not in set2: # PAM destroyed
+            counter = 0
             for x in listByPos:
                 if x[0] == elements:
                     tempList = list(x)
                     tempList[2] = 1
                     x = tuple(tempList)
+                    listByPos[counter] = x
+                counter += 1
+
 
 def sequenceFinder (newString, position, inputPAM):
     global listByPos

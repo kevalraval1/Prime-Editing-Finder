@@ -1,10 +1,3 @@
-''' 
-TODO : Make PAMs variable
-- try 2 BP PAMs with ambiguity codes
-    - REGEX characters search
-- try adjusting windows depending on PAM sizes
-    - global variable of PAM size, adjust indexes on that size
-'''
 from tkinter import *
 import sys, os, regex as re
 
@@ -108,7 +101,6 @@ def pamDestroyed(inputPAM, mutation, listByPos):
                     listByPos[counter] = x
                 counter += 1
 
-
 def sequenceFinder (newString, position, inputPAM):
     global listByPos
     global pattern
@@ -122,7 +114,7 @@ def sequenceFinder (newString, position, inputPAM):
         tempTuple = (match.start() + (position - (4 + len(inputPAM))), match.group(), 0) # List by Pos = [(start index in newstring, PAM sequence, 0/1/2 where 0 = PAM untouched 1 = destroyed 2 = created)]
         listByPos.append(tempTuple)
     if len(listByPos) == 0:
-        return print("No available NG PAM sites for given mutation.")
+        return print("No available PAM sites for given mutation.")
     else:
         return print(listByPos)
 
@@ -163,14 +155,14 @@ def ngRNA(newString, mutation):
     reversedString = ''.join(complement.get(base, base) for base in reversed(newString))
     newPosition = len(newString) - position - 1
     optimalString = ""
-    for base in range (newPosition, newPosition + 7):
+    for base in range (newPosition + 1, newPosition + 8):
         optimalString += reversedString[base]
     match = re.search(pattern, optimalString)
     if (match != None):
         ngRNA1 = ""
-        if reversedString[match.start() - 20] != "G":
+        if reversedString[newPosition + 1 + match.start() - 20] != "G":
             ngRNA1 += "G"
-        for bases in range (match.start() - 20, match.start()):
+        for bases in range (newPosition + 1 + match.start() - 20, newPosition + 1 + match.start()):
             ngRNA1 += reversedString[bases]
         ngRNA2 = ''.join(complement.get(base, base) for base in reversed(ngRNA1))
         tuple = (ngRNA1, ngRNA2)

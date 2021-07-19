@@ -173,48 +173,45 @@ def ngRNA(newString, mutation):
 
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     addString = ""
-    addString += ("ngRNA Top: " + "cacc" + listOfngRNA[0][0] + "\n")
-    addString += ("ngRNA Bottom: " + "aaac" + listOfngRNA[0][1] + "\n\n")
+    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
+    addString += (f"ngRNA Top: cacc{listOfngRNA[0][0]}\n")
+    addString += (f"ngRNA Bottom: aaac {listOfngRNA[0][1]}\n\n")
     for count in range (0, len(listByPos)):
         if (listByPos[count][2] == 1):
-            complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
             reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
             reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-            addString += ("-------------------\n")
-            addString += ("** PAM DESTROYED **\n")
-            addString += ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
-            addString += ("Position: " + str(listByPos[count][0] + 1) + "\n")
-            addString += ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-            addString += ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
-            addString += ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-            addString += ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
-            break
+            tempList = ["-------------------\n** PAM DESTROYED **", 
+                        f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
+                        f"Position: {str(listByPos[count][0] + 1)}",
+                        f"Spacer sequence Top: cacc{listOfSpacers[count]}gtttt", 
+                        f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
+                        f"Extension sequence Top: gtgc{listOfExtensions[count]}",
+                        f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
+            addString += "\n".join(tempList)
         if (listByPos[count][2] == 2):
-            complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
             reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
             reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-            addString += ("-------------------\n")
-            addString += ("** PAM CREATED **\n")
-            addString += ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
-            addString += ("Position: " + str(listByPos[count][0] + 1) + "\n")
-            addString += ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-            addString += ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
-            addString += ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-            addString += ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
-            break
+            tempList = ["-------------------\n** PAM CREATED **", 
+                        f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
+                        f"Position: {str(listByPos[count][0] + 1)}",
+                        f"Spacer sequence Top: cacc{listOfSpacers[count]}gtttt", 
+                        f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
+                        f"Extension sequence Top: gtgc{listOfExtensions[count]}",
+                        f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
+            addString += "\n".join(tempList)
     for count in range (0, len(listByPos)):
         if (listByPos[count][2] == 1) or (listByPos[count][2] == 2):
             continue
-        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
         reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
         reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-        addString += ("-------------------\n")
-        addString += ("PAM " + str(count + 1) + ": " + str(listByPos[count][1]) + "\n")
-        addString += ("Position: " + str(listByPos[count][0] + 1) + "\n")
-        addString += ("Spacer sequence Top: " + "cacc" + listOfSpacers[count] + "gtttt" + "\n")
-        addString += ("Spacer sequence Bottom: " + "ctctaaaac" + reverse_complement_spacer + "\n")
-        addString += ("Extension sequence Top: " + "gtgc" + listOfExtensions[count] + "\n")
-        addString += ("Extension sequence Bottom: " + "aaaa" + reverse_complement_extension + "\n")
+        tempList = ["-------------------", 
+                    f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
+                    f"Position: {str(listByPos[count][0] + 1)}",
+                    f"Spacer sequence Top: cacc{listOfSpacers[count]}gtttt", 
+                    f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
+                    f"Extension sequence Top: gtgc{listOfExtensions[count]}",
+                    f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
+        addString += "\n".join(tempList)
     addString += ("----------------------------------")
     file1.write(addString)
 
@@ -229,7 +226,6 @@ def main():
     completename = os.path.join(os.path.dirname("Prime_Edit.py"), (filename + ".txt"))
     #For testing executable:
     # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
-    file1 = open(completename, "w")
     parsedFASTA(FASTA)
     sequenceFinder(newString, position, inputPAM)
     pamDestroyed(inputPAM, mutation, listByPos)
@@ -237,6 +233,7 @@ def main():
     extension(newString, listByPos, mutation)
     ngRNA(newString, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
+    file1 = open(completename, "w")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")

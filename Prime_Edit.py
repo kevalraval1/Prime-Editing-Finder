@@ -172,36 +172,11 @@ def ngRNA(newString, mutation):
         listOfngRNA.append(tuple)
 
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
-    addString = ""
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
-    addString += (f"ngRNA Top: cacc{listOfngRNA[0][0]}\n")
-    addString += (f"ngRNA Bottom: aaac {listOfngRNA[0][1]}\n\n")
-    for count in range (0, len(listByPos)):
-        if (listByPos[count][2] == 1):
-            reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
-            reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-            tempList = ["-------------------\n** PAM DESTROYED **", 
-                        f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
-                        f"Position: {str(listByPos[count][0] + 1)}",
-                        f"Spacer sequence Top: cacc{listOfSpacers[count]}gtttt", 
-                        f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
-                        f"Extension sequence Top: gtgc{listOfExtensions[count]}",
-                        f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
-            addString += "\n".join(tempList)
-        if (listByPos[count][2] == 2):
-            reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
-            reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
-            tempList = ["-------------------\n** PAM CREATED **", 
-                        f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
-                        f"Position: {str(listByPos[count][0] + 1)}",
-                        f"Spacer sequence Top: cacc{listOfSpacers[count]}gtttt", 
-                        f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
-                        f"Extension sequence Top: gtgc{listOfExtensions[count]}",
-                        f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
-            addString += "\n".join(tempList)
-    for count in range (0, len(listByPos)):
-        if (listByPos[count][2] == 1) or (listByPos[count][2] == 2):
-            continue
+    printList = [f"ngRNA Top: cacc{listOfngRNA[0][0]}", 
+                f"ngRNA Bottom: aaac{listOfngRNA[0][1]}\n", 
+                ]
+    for count in range(0, len(listByPos)):
         reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
         reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
         tempList = ["-------------------", 
@@ -211,8 +186,20 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
                     f"Spacer sequence Bottom: ctctaaaac{reverse_complement_spacer}",
                     f"Extension sequence Top: gtgc{listOfExtensions[count]}",
                     f"Extension sequence Bottom: aaaa{reverse_complement_extension}\n"]
-        addString += "\n".join(tempList)
-    addString += ("----------------------------------")
+        if ((listByPos[count][2]) == 1):
+            tempList[0] = "-------------------\n** PAM DESTROYED **"
+            tempString = "\n".join(tempList)
+            printList.insert(2, tempString)
+            continue
+        if ((listByPos[count][2] == 2)):
+            tempList[0] = "-------------------\n** PAM CREATED **"
+            tempString = "\n".join(tempList)
+            printList.insert(3, tempString)
+            continue
+        tempString = "\n".join(tempList)
+        printList.append(tempString)
+    printList.append("----------------------------------")
+    addString = "\n".join(printList)
     file1.write(addString)
 
 def main():

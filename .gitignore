@@ -1,8 +1,6 @@
-# ignoring testing file for testing changes
-testing.py
-
 # ignoring DS.store
-DS.store
+.DS_Store
 
-# ignoring outputs made
-Testing.txt
+# ignoring any testing files made
+testing?.txt
+testing?.py

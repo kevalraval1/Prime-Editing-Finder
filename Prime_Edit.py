@@ -172,6 +172,9 @@ def ngRNA(newString, mutation):
         listOfngRNA.append(tuple)
 
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
+    if (len(listByPos == 0)):
+        file1.write("NO PAM SITES AVAILABLE IN GIVEN SEQUENCE")
+        return
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
     printList = [f"ngRNA Top: cacc{listOfngRNA[0][0]}", 
                 f"ngRNA Bottom: aaac{listOfngRNA[0][1]}\n", 
@@ -238,9 +241,6 @@ def main():
     sys.exit()
 
 # FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
-
-# mutation = "T"
-# main(FASTA, mutation)
 
 canvas = Canvas(window, height = 200, width = 600)
 canvas.pack()

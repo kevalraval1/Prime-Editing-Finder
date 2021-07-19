@@ -2,7 +2,7 @@ from tkinter import *
 import sys, os, regex as re
 
 window = Tk()
-window.title("Prime Editing: spG Peg Design")
+window.title("Prime Editing: spG Peg Design with Variable PAM sequences")
 
 def reverser(FASTA, mutation):
     global newFASTA
@@ -251,7 +251,6 @@ frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 welcome = Label(frame, text = "Welcome to the spG Peg Design Program", fg = "Black")
 welcome.pack(side = "top")
 
-
 FASTAEntry = Entry(frame, width = 50)
 FASTAEntry.pack(side = "top")
 FASTAEntry.insert(0, "Please enter the DNA sequence")
@@ -271,7 +270,6 @@ filenameEntry.insert(0, "Please enter the desired .txt filename")
 PBSlengthEntry = Entry(frame, width = 50)
 PBSlengthEntry.pack(side = "top")
 PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17)")
-
 
 enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", bg = "gray", command = main)
 enterButton.pack()

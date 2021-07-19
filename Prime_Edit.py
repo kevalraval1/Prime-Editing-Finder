@@ -172,7 +172,7 @@ def ngRNA(newString, mutation):
         listOfngRNA.append(tuple)
 
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
-    if (len(listByPos == 0)):
+    if (len(listByPos) == 0):
         file1.write("NO PAM SITES AVAILABLE IN GIVEN SEQUENCE")
         return
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 

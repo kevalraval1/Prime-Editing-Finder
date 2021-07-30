@@ -2,7 +2,7 @@ from tkinter import *
 import sys, os, regex as re
 
 window = Tk()
-window.title("Prime Editing: spG Peg Design with Variable PAM sequences")
+window.title("Single Base Editing Helper Tool")
 
 def reverser(FASTA, mutation):
     global newFASTA
@@ -173,7 +173,7 @@ def ngRNA(newString, mutation):
 
 def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     if (len(listByPos) == 0):
-        file1.write("NO PAM SITES AVAILABLE IN GIVEN SEQUENCE")
+        file1.write("NO PAM SITES AVAILABLE IN GIVEN INPUT")
         return
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
     printList = [f"ngRNA Top: cacc{listOfngRNA[0][0]}", 
@@ -240,7 +240,7 @@ def main():
     file1.close()
     sys.exit()
 
-# FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
+# FASTA = "ACCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTCTATCATCATCTCATGCTGTATCATCATCTTAGCGACGGT(G)TAGCATGCTCTATCATCATCTCATGCTCTATCATCATCTGCATACGCATGCTCTATCATCATCTGTTAAATATAT"
 
 canvas = Canvas(window, height = 200, width = 600)
 canvas.pack()
@@ -248,8 +248,16 @@ canvas.pack()
 frame = Frame(window,relief = 'groove')
 frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 
-welcome = Label(frame, text = "Welcome to the spG Peg Design Program", fg = "Black")
+welcome = Label(frame, text = "Welcome to the Single Base Editing Helper Tool", fg = "Black")
 welcome.pack(side = "top")
+
+options = ["--Select tool to use--", "Prime Editing Tool", "Base Editing Tool"]
+
+clicked = StringVar()
+clicked.set(options[0])
+
+drop = OptionMenu(window, clicked, *options)
+drop.pack(side = "top")
 
 FASTAEntry = Entry(frame, width = 50)
 FASTAEntry.pack(side = "top")
@@ -261,15 +269,15 @@ mutationEntry.insert(0, "Please enter the desired mutation")
 
 pamEntry = Entry(frame, width = 50)
 pamEntry.pack(side = "top")
-pamEntry.insert(0, "Please enter the desired PAM sequence")
+pamEntry.insert(0, "Please enter the desired PAM sequence if applicable")
+
+PBSlengthEntry = Entry(frame, width = 50)
+PBSlengthEntry.pack(side = "top")
+PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17) if applicable")
 
 filenameEntry = Entry(frame, width = 50)
 filenameEntry.pack(side = "top")
 filenameEntry.insert(0, "Please enter the desired .txt filename")
-
-PBSlengthEntry = Entry(frame, width = 50)
-PBSlengthEntry.pack(side = "top")
-PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17)")
 
 enterButton = Button(window, text = "Start", padx = 10, pady = 5, fg = "Black", bg = "gray", command = main)
 enterButton.pack()

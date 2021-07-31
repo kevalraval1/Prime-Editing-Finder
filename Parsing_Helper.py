@@ -1,9 +1,9 @@
+complementDict = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('}
+
 def reverser(FASTA, mutation):
-    global newFASTA
-    global newMutation
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('} 
-    newFASTA = ''.join(complement.get(base, base) for base in reversed(FASTA))
-    newMutation = ''.join(complement.get(base, base) for base in reversed(mutation))
+    newFASTA = ''.join(complementDict.get(base, base) for base in reversed(FASTA))
+    newMutation = ''.join(complementDict.get(base, base) for base in reversed(mutation))
+    return newFASTA, newMutation
 
 def FASTA (FASTA):
     newString = ""

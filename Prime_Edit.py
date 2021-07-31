@@ -1,36 +1,6 @@
 import sys, os, regex as re
 import Parsing_Helper as parse
 
-def reverser(FASTA, mutation):
-    global newFASTA
-    global newMutation
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('} 
-    newFASTA = ''.join(complement.get(base, base) for base in reversed(FASTA))
-    newMutation = ''.join(complement.get(base, base) for base in reversed(mutation))
-
-def parsedFASTA (FASTA):
-    global newString
-    global position
-    newString = ""
-    counter = 0
-    position = 0 # position is the index of the mutation in the new string
-    for char in FASTA:
-        if (char != "(") and (char != ")"):
-            newString += char
-            counter += 1
-        elif (char == ")"):
-            continue
-        else:
-            position = counter # Imagine mutation at position 1
-            continue
-    if len(newString) < 11:
-        return print("ERROR: FASTA given is too small, please enter a FASTA that is 11 or more base pairs.")
-    if ((position - 7) < 0) or (position + 4 > len(newString)):
-        return print("ERROR: Selected mutation site is out of bounds for editing in this FASTA file. Add more base pairs to the ends for editing.")
-    if ((position - 27) < 0) or ((position + 11) > len(newString)):
-        return print("ERROR: Some Spacer or Extension sequences may not be made, PAM may be out of bounds of the FASTA file.")
-    return print("Successfully parsed FASTA")
-
 def regexCompiler (input):
     compile = ""
     for x in input:
@@ -67,7 +37,7 @@ def regexCompiler (input):
     print(compile)
     return re.compile(compile)
 
-def pamDestroyed(position,  newString, inputPAM, mutation, listByPos):
+def pamDestroyed(position, newString, inputPAM, mutation, listByPos, pattern):
     searchString = ""
     for bases in range (position - len(inputPAM) + 1, position + len(inputPAM)):
         searchString += newString[bases]
@@ -98,25 +68,22 @@ def pamDestroyed(position,  newString, inputPAM, mutation, listByPos):
                     listByPos[counter] = x
                 counter += 1
 
-def sequenceFinder (newString, position, inputPAM):
-    global listByPos
-    global pattern
+def sequenceFinder (pattern, newString, position, inputPAM):
     listByPos = []
     optimal_string = ""
     for x in range (position - (4 + len(inputPAM)), position + (3 + len(inputPAM))): # position = index of mutation, 4 bases from end of first possible PAM
         optimal_string += newString[x]                                               # 2 bases from the start of last possible PAM, + 1 for range function (ends 1 before)
     print ("Mutation at optimal position in string: " + optimal_string)
-    pattern = regexCompiler(inputPAM)
     for match in pattern.finditer(optimal_string, overlapped=True):
         tempTuple = (match.start() + (position - (4 + len(inputPAM))), match.group(), 0) # List by Pos = [(start index in newstring, PAM sequence, 0/1/2 where 0 = PAM untouched 1 = destroyed 2 = created)]
         listByPos.append(tempTuple)
     if len(listByPos) == 0:
         return print("No available PAM sites for given mutation.")
     else:
-        return print(listByPos)
+        print (listByPos)
+        return listByPos
 
 def spacer(newString, listByPos):
-    global listOfSpacers
     listOfSpacers = []
     for tup in listByPos:
         spacerSequence = ""
@@ -125,10 +92,10 @@ def spacer(newString, listByPos):
         for bases in range ((tup[0] - 20), (tup[0])):
             spacerSequence += newString[bases]
         listOfSpacers.append(spacerSequence) # List of Spacers = [spacer 1 for PAM 1, spacer 2 for PAM 2]
-    return print(listOfSpacers)
+    print(listOfSpacers)
+    return listOfSpacers
 
 def extension(position, newString, listByPos, mutation, PBSlength):
-    global listOfExtensions
     listOfExtensions = []
     for tup in listByPos:
         extensionSequence = ""
@@ -137,19 +104,17 @@ def extension(position, newString, listByPos, mutation, PBSlength):
                 extensionSequence += mutation.lower()
                 continue
             extensionSequence += newString[bases]
-        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
-        reverse_complement = ''.join(complement.get(base, base) for base in reversed(extensionSequence))
+        reverse_complement = ''.join(parse.complementDict.get(base, base) for base in reversed(extensionSequence))
         listOfExtensions.append(reverse_complement) # List of Extensions = [Extension 1 for PAM 1, Extension 2 for PAM 2]
-    return (print(listOfExtensions)) 
+    print(listOfExtensions)
+    return listOfExtensions
 
-def ngRNA(position, newString, mutation):
-    global listOfngRNA
+def ngRNA(position, newString, mutation, pattern):
     listOfngRNA = []
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('}
     tempList = list(newString)
     tempList[position] = mutation.lower()
     newString = "".join(tempList)
-    reversedString = ''.join(complement.get(base, base) for base in reversed(newString))
+    reversedString = ''.join(parse.complementDict.get(base, base) for base in reversed(newString))
     newPosition = len(newString) - position - 1
     optimalString = ""
     for base in range (newPosition + 1, newPosition + 8):
@@ -161,24 +126,24 @@ def ngRNA(position, newString, mutation):
             ngRNA1 += "G"
         for bases in range (newPosition + 1 + match.start() - 20, newPosition + 1 + match.start()):
             ngRNA1 += reversedString[bases]
-        ngRNA2 = ''.join(complement.get(base, base) for base in reversed(ngRNA1))
+        ngRNA2 = ''.join(parse.complementDict.get(base, base) for base in reversed(ngRNA1))
         tuple = (ngRNA1, ngRNA2)
         listOfngRNA.append(tuple) # List of ngRNA = [(top ngRNA, bot ngRNA), (top ngRNA, bot ngRNA)] plus strand then minus strand
     else:
         tuple = ("N/A", "N/A")
         listOfngRNA.append(tuple)
+    return listOfngRNA
 
-def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
+def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, file1):
     if (len(listByPos) == 0):
         file1.write("NO PAM SITES AVAILABLE IN GIVEN INPUT")
         return
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a'} 
     printList = [f"ngRNA Top: cacc{listOfngRNA[0][0]}", 
                 f"ngRNA Bottom: aaac{listOfngRNA[0][1]}\n", 
                 ]
     for count in range(0, len(listByPos)):
-        reverse_complement_spacer = ''.join(complement.get(base, base) for base in reversed(listOfSpacers[count]))
-        reverse_complement_extension = ''.join(complement.get(base, base) for base in reversed(listOfExtensions[count]))
+        reverse_complement_spacer = ''.join(parse.complementDict.get(base, base) for base in reversed(listOfSpacers[count]))
+        reverse_complement_extension = ''.join(parse.complementDict.get(base, base) for base in reversed(listOfExtensions[count]))
         tempList = ["-------------------", 
                     f"PAM {str(count + 1)}: {str(listByPos[count][1])}", 
                     f"Position: {str(listByPos[count][0] + 1)}",
@@ -206,11 +171,12 @@ def main(FASTA, mutation, filename, inputPAM, PBS):
     PBSlength = int(PBS)
     newString = parse.FASTA(FASTA)[0]
     position = parse.FASTA(FASTA)[1]
-    sequenceFinder(newString, position, inputPAM)
-    pamDestroyed(position, newString, inputPAM, mutation, listByPos)
-    spacer(newString, listByPos)
-    extension(position, newString, listByPos, mutation, PBSlength)
-    ngRNA(position, newString, mutation)
+    pattern = regexCompiler(inputPAM)
+    listByPos = sequenceFinder(pattern, newString, position, inputPAM)
+    pamDestroyed(position, newString, inputPAM, mutation, listByPos, pattern)
+    listOfSpacers = spacer(newString, listByPos)
+    listOfExtensions = extension(position, newString, listByPos, mutation, PBSlength)
+    listOfngRNA = ngRNA(position, newString, mutation, pattern)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     #For testing code:
     completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
@@ -218,18 +184,20 @@ def main(FASTA, mutation, filename, inputPAM, PBS):
     # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
-    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
-    file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")
-    reverser(FASTA, mutation)
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, file1)
+    FASTA = parse.reverser(FASTA, mutation)[0]
+    mutation = parse.reverser(FASTA, mutation)[1]
     newString = parse.FASTA(FASTA)[0]
     position = parse.FASTA(FASTA)[1]
-    sequenceFinder(newString, position, inputPAM)
-    pamDestroyed(position, newString, inputPAM, mutation, listByPos)
-    spacer(newString, listByPos)
-    extension(position, newString, listByPos, mutation, PBSlength)
-    ngRNA(position, newString, mutation)
+    pattern = regexCompiler(inputPAM)
+    listByPos = sequenceFinder(pattern, newString, position, inputPAM)
+    pamDestroyed(position, newString, inputPAM, mutation, listByPos, pattern)
+    listOfSpacers = spacer(newString, listByPos)
+    listOfExtensions = extension(position, newString, listByPos, mutation, PBSlength)
+    listOfngRNA = ngRNA(position, newString, mutation, pattern)
     print ("Successfully found spacer and extension sequences for all PAMs.")
-    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
+    file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")
+    analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, file1)
     print ("Exiting...")
     file1.close()
     sys.exit()

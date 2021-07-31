@@ -1,5 +1,6 @@
 from tkinter import *
 import Prime_Edit as PE
+import Base_Edit as BE
 
 window = Tk()
 window.title("Single Base Editing Helper Tool")
@@ -10,6 +11,7 @@ def main():
 
     elif clicked.get() == "Base Editing Tool":
         pass
+        # BE.main()
 
 
 canvas = Canvas(window, height = 200, width = 600)

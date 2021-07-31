@@ -1,5 +1,5 @@
-from tkinter import *
 import sys, os, regex as re
+import Parsing_Helper as parse
 
 def reverser(FASTA, mutation):
     global newFASTA
@@ -67,7 +67,7 @@ def regexCompiler (input):
     print(compile)
     return re.compile(compile)
 
-def pamDestroyed(inputPAM, mutation, listByPos):
+def pamDestroyed(position,  newString, inputPAM, mutation, listByPos):
     searchString = ""
     for bases in range (position - len(inputPAM) + 1, position + len(inputPAM)):
         searchString += newString[bases]
@@ -127,7 +127,7 @@ def spacer(newString, listByPos):
         listOfSpacers.append(spacerSequence) # List of Spacers = [spacer 1 for PAM 1, spacer 2 for PAM 2]
     return print(listOfSpacers)
 
-def extension(newString, listByPos, mutation):
+def extension(position, newString, listByPos, mutation, PBSlength):
     global listOfExtensions
     listOfExtensions = []
     for tup in listByPos:
@@ -142,7 +142,7 @@ def extension(newString, listByPos, mutation):
         listOfExtensions.append(reverse_complement) # List of Extensions = [Extension 1 for PAM 1, Extension 2 for PAM 2]
     return (print(listOfExtensions)) 
 
-def ngRNA(newString, mutation):
+def ngRNA(position, newString, mutation):
     global listOfngRNA
     listOfngRNA = []
     complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('}
@@ -203,30 +203,31 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1):
     file1.write(addString)
 
 def main(FASTA, mutation, filename, inputPAM, PBS):
-    global PBSlength
     PBSlength = int(PBS)
+    newString = parse.FASTA(FASTA)[0]
+    position = parse.FASTA(FASTA)[1]
+    sequenceFinder(newString, position, inputPAM)
+    pamDestroyed(position, newString, inputPAM, mutation, listByPos)
+    spacer(newString, listByPos)
+    extension(position, newString, listByPos, mutation, PBSlength)
+    ngRNA(position, newString, mutation)
+    print ("Successfully found spacer and extension sequences for all PAMs.")
     #For testing code:
-    completename = os.path.join(os.path.dirname("Prime_Edit.py"), (filename + ".txt"))
+    completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
     #For testing executable:
     # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
-    parsedFASTA(FASTA)
-    sequenceFinder(newString, position, inputPAM)
-    pamDestroyed(inputPAM, mutation, listByPos)
-    spacer(newString, listByPos)
-    extension(newString, listByPos, mutation)
-    ngRNA(newString, mutation)
-    print ("Successfully found spacer and extension sequences for all PAMs.")
     file1 = open(completename, "w")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     file1.write("\n\n*MINUS STRAND ANALYSIS*\n\n")
     reverser(FASTA, mutation)
-    parsedFASTA(newFASTA)
+    newString = parse.FASTA(FASTA)[0]
+    position = parse.FASTA(FASTA)[1]
     sequenceFinder(newString, position, inputPAM)
-    pamDestroyed(inputPAM, newMutation, listByPos)
+    pamDestroyed(position, newString, inputPAM, mutation, listByPos)
     spacer(newString, listByPos)
-    extension(newString, listByPos, newMutation)
-    ngRNA(newString, mutation)
+    extension(position, newString, listByPos, mutation, PBSlength)
+    ngRNA(position, newString, mutation)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, file1)
     print ("Exiting...")

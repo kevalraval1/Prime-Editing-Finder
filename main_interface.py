@@ -10,8 +10,7 @@ def main():
         PE.main(FASTAEntry.get(), mutationEntry.get(), filenameEntry.get(), pamEntry.get(), PBSlengthEntry.get())
 
     elif clicked.get() == "Base Editing Tool":
-        pass
-        # BE.main()
+        BE.main(FASTAEntry.get(), mutationEntry.get(), filenameEntry.get())
 
 
 canvas = Canvas(window, height = 200, width = 600)

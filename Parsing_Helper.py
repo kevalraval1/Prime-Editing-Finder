@@ -1,6 +1,6 @@
 complementDict = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'a': 't', 'c': 'g', 'g': 'c', 't': 'a', '(': ')', ')': '('}
 
-def reverser(FASTA, mutation):
+def reverser(FASTA, mutation="G"):
     newFASTA = ''.join(complementDict.get(base, base) for base in reversed(FASTA))
     newMutation = ''.join(complementDict.get(base, base) for base in reversed(mutation))
     return newFASTA, newMutation

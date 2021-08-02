@@ -166,6 +166,7 @@ def analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, fil
     printList.append("----------------------------------")
     addString = "\n".join(printList)
     file1.write(addString)
+    return
 
 def main(FASTA, mutation, filename, inputPAM, PBS):
     PBSlength = int(PBS)

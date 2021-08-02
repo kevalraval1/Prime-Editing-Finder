@@ -25,4 +25,4 @@ def FASTA (FASTA):
     if ((position - 27) < 0) or ((position + 11) > len(newString)):
         return print("ERROR: Some Spacer or Extension sequences may not be made, PAM may be out of bounds of the FASTA file.")
     print("Successfully parsed FASTA")
-    return (newString, position)
+    return newString, position

@@ -8,25 +8,25 @@ def validSubstitution(FASTA, mutation):
     if (newFASTA[position] == "C" and mutation == "T"):
         enzyme = "CBE"
         newString = newFASTA
-        strand = "+"
+        strand = "PLUS STRAND"
     elif (newFASTA[position] == "A" and mutation == "G"):
         enzyme = "ABE"
         newString = newFASTA
-        strand = "+"
+        strand = "PLUS STRAND"
     elif (newFASTA[position] == "T" and mutation == "C"):
         enzyme = "ABE"
         newString = parse.reverser(FASTA, mutation)[0]
         mutation = parse.complementDict[mutation]
         position = parse.FASTA(newString)[1]
         newString = parse.FASTA(newString)[0]
-        strand = "-"
+        strand = "MINUS STRAND"
     elif (newFASTA[position] == "G" and mutation == "A"):
         enzyme = "CBE"
         newString = parse.reverser(FASTA, mutation)[0]
         mutation = parse.complementDict[mutation]
         position = parse.FASTA(newString)[1]
         newString = parse.FASTA(newString)[0]
-        strand = "-"
+        strand = "MINUS STRAND"
     if (enzyme == "Invalid"):
         return enzyme
     return newString, position, mutation, enzyme, strand
@@ -67,11 +67,11 @@ def bystanderMutations(listOfgRNA, enzyme):
 
 def analysisPrinter(listOfgRNA, enzyme, strand, file1):
     printList = [f"Enzyme to use: {enzyme}",
-                f"Working Strand: {strand}"]
+                f"{strand}"]
     for count, tuple in enumerate(listOfgRNA):
         tempList = ["------------------------------",
-                    f"guideRNA Top {count + 1}: cacc{tuple[0]}",
-                    f"guideRNA Bottom: {parse.reverser(tuple[0])[0]}",
+                    f"gRNA {count + 1} Top: cacc{tuple[0]}",
+                    f"gRNA {count + 1} Bottom: aaac{parse.reverser(tuple[0])[0]}",
                     f"PAM: {tuple[1]}",
                     f"Number of Bystander mutations: {tuple[2]}"]
         tempString = '\n'.join(tempList)
@@ -85,7 +85,6 @@ def main(FASTA, mutation, fileName):
     tempTuple = validSubstitution(FASTA, mutation)
     newString = tempTuple[0]
     position = tempTuple[1]
-    newMutation = tempTuple[2]
     enzyme = tempTuple[3]
     strand = tempTuple[4]
     listOfgRNA = findgRNA(newString, position)

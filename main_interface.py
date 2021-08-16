@@ -22,7 +22,7 @@ frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 welcome = Label(frame, text = "Welcome to the Single Base Editing Helper Tool", fg = "Black")
 welcome.pack(side = "top")
 
-options = ["--Select tool to use--", "Prime Editing Tool", "Base Editing Tool"]
+options = ["--Select tool to use--", "Prime Editing Tool (PE3B)", "Base Editing Tool"]
 
 clicked = StringVar()
 clicked.set(options[0])
@@ -39,11 +39,11 @@ mutationEntry.insert(0, "Please enter the desired mutation")
 
 pamEntry = Entry(frame, width = 50)
 pamEntry.pack(side = "top")
-pamEntry.insert(0, "Please enter the desired PAM sequence if applicable")
+pamEntry.insert(0, "Please enter the desired PAM sequence (Prime Editing Only)")
 
 PBSlengthEntry = Entry(frame, width = 50)
 PBSlengthEntry.pack(side = "top")
-PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17) if applicable")
+PBSlengthEntry.insert(0, "Please enter PBS Length (from 7-17) (Prime Editing Only)")
 
 filenameEntry = Entry(frame, width = 50)
 filenameEntry.pack(side = "top")

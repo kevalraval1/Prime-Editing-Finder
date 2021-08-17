@@ -22,7 +22,7 @@ frame.place(relx = 0.1, rely = 0.1, relwidth = 0.8, relheight = 0.8)
 welcome = Label(frame, text = "Welcome to the Single Base Editing Helper Tool", fg = "Black")
 welcome.pack(side = "top")
 
-options = ["--Select tool to use--", "Prime Editing Tool (PE3B)", "Base Editing Tool"]
+options = ["--Select tool to use--", "Prime Editing Tool (PE3b)", "Base Editing Tool"]
 
 clicked = StringVar()
 clicked.set(options[0])

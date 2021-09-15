@@ -90,9 +90,9 @@ def main(FASTA, mutation, fileName):
     listOfgRNA = findgRNA(newString, position)
     listOfgRNA = bystanderMutations(listOfgRNA, enzyme)
     #For testing code:
-    completename = os.path.join(os.path.dirname("Main_Interface.py"), (fileName + ".txt"))
+    # completename = os.path.join(os.path.dirname("Main_Interface.py"), (fileName + ".txt"))
     #For testing executable:
-    # completename = os.path.join(os.path.dirname(sys.executable), (fileName + ".txt"))
+    completename = os.path.join(os.path.dirname(sys.executable), (fileName + ".txt"))
     file1 = open(completename, "w")
     analysisPrinter(listOfgRNA, enzyme, strand, file1)
     file1.close()

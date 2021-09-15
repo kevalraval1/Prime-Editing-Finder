@@ -76,6 +76,7 @@ def sequenceFinder (pattern, newString, position, inputPAM):
     print ("Mutation at optimal position in string: " + optimal_string)
     for match in pattern.finditer(optimal_string, overlapped=True):
         tempTuple = (match.start() + (position - (4 + len(inputPAM))), match.group(), 0) # List by Pos = [(start index in newstring, PAM sequence, 0/1/2 where 0 = PAM untouched 1 = destroyed 2 = created)]
+        print(match)
         listByPos.append(tempTuple)
     if len(listByPos) == 0:
         return print("No available PAM sites for given mutation.")
@@ -180,9 +181,9 @@ def main(FASTA, mutation, filename, inputPAM, PBS):
     listOfngRNA = ngRNA(position, newString, mutation, pattern)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     #For testing code:
-    completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
+    # completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
     #For testing executable:
-    # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
+    completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, file1)

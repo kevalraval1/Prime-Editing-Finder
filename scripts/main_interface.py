@@ -6,7 +6,7 @@ window = Tk()
 window.title("Single Base Editing Helper Tool")
 
 def main():
-    if clicked.get() == "Prime Editing Tool":
+    if clicked.get() == "Prime Editing Tool (PE3b)":
         PE.main(FASTAEntry.get(), mutationEntry.get(), filenameEntry.get(), pamEntry.get(), PBSlengthEntry.get())
 
     elif clicked.get() == "Base Editing Tool":

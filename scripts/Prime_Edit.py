@@ -181,9 +181,9 @@ def main(FASTA, mutation, filename, inputPAM, PBS):
     listOfngRNA = ngRNA(position, newString, mutation, pattern)
     print ("Successfully found spacer and extension sequences for all PAMs.")
     #For testing code:
-    # completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
+    completename = os.path.join(os.path.dirname("Main_Interface.py"), (filename + ".txt"))
     #For testing executable:
-    completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
+    # completename = os.path.join(os.path.dirname(sys.executable), (filename + ".txt"))
     file1 = open(completename, "w")
     file1.write("\n*PLUS STRAND ANALYSIS*\n\n")
     analysisPrinter(listByPos, listOfSpacers, listOfExtensions, listOfngRNA, file1)
